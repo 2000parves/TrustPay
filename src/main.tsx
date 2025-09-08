@@ -12,8 +12,8 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <HelmetProvider>
       <Provider store={store}>
- <RouterProvider router={router} />
-  <Toaster richColors />
+        <RouterProvider router={router} />
+        <Toaster richColors />
       </Provider>
     </HelmetProvider>
   </StrictMode>
