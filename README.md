@@ -1,10 +1,10 @@
-# Digital Wallet Client
+# TrustPay
 
-A modern, responsive frontend application for managing digital wallet operations, built with React, Redux, and Material-UI. This client interfaces seamlessly with the Digital Wallet API, enabling users to perform transactions, view balances, and manage their accounts.
+A modern, responsive frontend application for managing digital wallet operations, built with React, Redux, and Material-UI. TrustPay interfaces seamlessly with secure payment APIs, enabling users to perform transactions, view balances, and manage their accounts.
 
 ## Live Demo
 
-[hhttps://digital-wallet-client-omega.vercel.app](hhttps://digital-wallet-client-omega.vercel.app)
+[https://trustpay-app.vercel.app](https://trustpay-app.vercel.app)
 
 ---
 
@@ -27,7 +27,7 @@ A modern, responsive frontend application for managing digital wallet operations
 - **Transactions**: Transfer funds, add money, and withdraw with confirmation dialogs.
 - **Responsive Design**: Mobile-first approach using Material-UI.
 - **State Management**: Global state management with Redux.
-- **API Integration**: Connects to the Digital Wallet API for backend operations.
+- **API Integration**: Connects to secure payment APIs for backend operations.
 
 ---
 
@@ -56,8 +56,8 @@ A modern, responsive frontend application for managing digital wallet operations
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/muhammadranju/digital-wallet-client.git
-   cd digital-wallet-client
+   git clone https://github.com/muhammadranju/trustpay.git
+   cd trustpay
    ```
 
 2. Install dependencies:
@@ -92,7 +92,7 @@ A modern, responsive frontend application for managing digital wallet operations
 ## Folder Structure
 
 ```
-digital-wallet-client/
+trustpay/
 ├── public/                  # Static files
 ├── src/
 │   ├── assets/              # Images and icons
@@ -112,7 +112,7 @@ digital-wallet-client/
 
 ## Contributing
 
-We welcome contributions to improve the Digital Wallet Client. To contribute:
+We welcome contributions to improve TrustPay. To contribute:
 
 1. Fork the repository.
 2. Create a new branch (`git checkout -b feature/YourFeature`).

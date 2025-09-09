@@ -71,7 +71,7 @@ export function Navbar() {
           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center">
             <Wallet className="h-6 w-6 text-white" />
           </div>
-          <span className="font-black text-2xl bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">CyberPay</span>
+          <span className="font-black text-2xl bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">TrustPay</span>
         </Link>
 
         {/* Desktop Navigation */}
