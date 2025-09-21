@@ -7,6 +7,8 @@ import Contact from "@/pages/Contact";
 import Login from "@/pages/auth/Login";
 import Signup from "@/pages/auth/Signup";
 import FAQ from "@/pages/FAQ";
+import ForgotPasswordPage from "@/pages/auth/ForgotPassword";
+import OtpPage from "@/pages/auth/OtpPage";
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +42,14 @@ export const router = createBrowserRouter([
       {
         path: "auth/signup",
         element: <Signup />,
+      },
+      {
+        path: "auth/forgot-password",
+        element: <ForgotPasswordPage />,
+      },
+      {
+        path: "auth/otp-verification",
+        element: <OtpPage />,
       },
     ]
   },

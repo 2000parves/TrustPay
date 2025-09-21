@@ -9,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useGetProfileQuery } from "@/redux/api/userApi";
 import { logout } from "@/redux/slices/authSlice";
 import { DialogTitle } from "@radix-ui/react-dialog"; // <- Required for accessibility
 import Cookie from "js-cookie";
@@ -32,11 +31,9 @@ export function Navbar() {
   
   const isAuthenticated =
     Cookie.get("isAuthenticated") || localStorage.getItem("isAuthenticated");
-    
-  const { data } = useGetProfileQuery(undefined, {
-    skip: !isAuthenticated,
-  });
-  const user = data?.data;
+  // Derive user from local storage or cookies (no API)
+  const rawUser = Cookie.get("userData") || localStorage.getItem("userData");
+  const user = rawUser ? (() => { try { return JSON.parse(rawUser); } catch { return null; } })() : null;
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
