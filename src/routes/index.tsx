@@ -12,6 +12,8 @@ import OtpPage from "@/pages/auth/OtpPage";
 import TermsPage from "@/pages/Terms";
 import PrivacyPage from "@/pages/Privacy";
 import SupportPage from "@/pages/auth/Support";
+import AnalyticsPage from "@/pages/Analytics";
+import NotFoundPage from "@/pages/NotFound";
 
 export const router = createBrowserRouter([
   {
@@ -47,6 +49,10 @@ export const router = createBrowserRouter([
         element: <PrivacyPage />,
       },
       {
+        path: "analytics",
+        element: <AnalyticsPage />,
+      },
+      {
         path: "auth/login",
         element: <Login />,
       },
@@ -65,6 +71,10 @@ export const router = createBrowserRouter([
       {
         path: "auth/support",
         element: <SupportPage />,
+      },
+      {
+        path: "*",
+        element: <NotFoundPage />,
       },
     ]
   },
