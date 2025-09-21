@@ -9,6 +9,9 @@ import Signup from "@/pages/auth/Signup";
 import FAQ from "@/pages/FAQ";
 import ForgotPasswordPage from "@/pages/auth/ForgotPassword";
 import OtpPage from "@/pages/auth/OtpPage";
+import TermsPage from "@/pages/Terms";
+import PrivacyPage from "@/pages/Privacy";
+import SupportPage from "@/pages/auth/Support";
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +39,14 @@ export const router = createBrowserRouter([
         element: <FAQ />,
       },
       {
+        path: "terms",
+        element: <TermsPage />,
+      },
+      {
+        path: "privacy",
+        element: <PrivacyPage />,
+      },
+      {
         path: "auth/login",
         element: <Login />,
       },
@@ -50,6 +61,10 @@ export const router = createBrowserRouter([
       {
         path: "auth/otp-verification",
         element: <OtpPage />,
+      },
+      {
+        path: "auth/support",
+        element: <SupportPage />,
       },
     ]
   },
