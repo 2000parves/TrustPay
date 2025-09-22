@@ -11,11 +11,111 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
+import { useLoginMutation } from "@/redux/api/authApi";
+import { setCredentials } from "@/redux/slices/authSlice";
+import { toast } from "sonner";
+import Cookies from "js-cookie";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [login, { isLoading }] = useLoginMutation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!email || !password) return;
+
+    try {
+      const result = await login({ email, password }).unwrap();
+
+      dispatch(
+        setCredentials({ user: result.data.user, token: result.data.token })
+      );
+
+      const userData = {
+        id: result?.data?.id,
+        email: result?.data.email,
+        name: result?.data.name,
+        contact: result?.data.contact,
+        location: result?.data.location,
+        role: result?.data.role,
+        token: result?.data.token,
+      };
+
+      Cookies.set("token", userData.token);
+      Cookies.set("isAuthenticated", "true");
+
+      localStorage.setItem("token", result?.data.token);
+      localStorage.setItem("userRole", result?.data.role);
+      localStorage.setItem("userData", JSON.stringify(userData));
+      localStorage.setItem("isAuthenticated", "true");
+
+      // Normalize role to uppercase to handle API values like 'user' | 'agent' | 'admin'
+      const normalizedRole = (result.data.role || "").toString().toUpperCase();
+      switch (normalizedRole) {
+        case "USER":
+          navigate("/dashboard/user");
+          toast.success(`Welcome Back! ${result.data.name}`);
+          break;
+        case "AGENT":
+          navigate("/dashboard/agent");
+          toast.success(`Welcome Back! ${result.data.name}`);
+          break;
+        case "ADMIN":
+          navigate("/dashboard/admin");
+          toast.success(`Welcome Back! ${result.data.name}`);
+          break;
+        default:
+          navigate("/");
+      }
+    } catch (error: unknown) {
+      let message = "Login failed";
+      if (typeof error === "object" && error !== null) {
+        const maybe = error as { data?: { message?: string } };
+        if (maybe.data?.message) {
+          message = maybe.data.message;
+        } else if (
+          "message" in error &&
+          typeof (error as { message?: unknown }).message === "string"
+        ) {
+          message = (error as { message?: string }).message ?? message;
+        }
+      }
+      console.error("Login failed:", message, error);
+      toast.error(message);
+    }
+  };
+
+  const demoCredentials = [
+    { role: "user", email: "user@gmail.com", password: "demo1234" },
+    { role: "agent", email: "agent@gmail.com", password: "demo1234" },
+    { role: "admin", email: "admin@gmail.com", password: "demo1234" },
+  ];
+
+  const fillDemoCredentials = (demoRole: string) => {
+    const creds = demoCredentials.find((c) => c.role === demoRole);
+    if (creds) {
+      setEmail(creds.email);
+      setPassword(creds.password);
+    }
+  };
+
+  useEffect(() => {
+    if (
+      localStorage.getItem("isAuthenticated") === "true" ||
+      Cookies.get("isAuthenticated") === "true"
+    ) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -29,13 +129,15 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleLogin}>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input 
                 id="email" 
                 type="email" 
                 placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -46,6 +148,8 @@ export default function LoginPage() {
                   id="password" 
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
                 <Button
@@ -81,9 +185,14 @@ export default function LoginPage() {
                 Forgot password?
               </Link>
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={isLoading}>
               Sign In
             </Button>
+            <div className="grid grid-cols-3 gap-2">
+              <Button type="button" variant="outline" onClick={() => fillDemoCredentials("user")}>User Demo</Button>
+              <Button type="button" variant="outline" onClick={() => fillDemoCredentials("agent")}>Agent Demo</Button>
+              <Button type="button" variant="outline" onClick={() => fillDemoCredentials("admin")}>Admin Demo</Button>
+            </div>
           </form>
 
           <div className="relative">

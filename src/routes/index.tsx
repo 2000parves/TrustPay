@@ -14,6 +14,9 @@ import PrivacyPage from "@/pages/Privacy";
 import SupportPage from "@/pages/auth/Support";
 import AnalyticsPage from "@/pages/Analytics";
 import NotFoundPage from "@/pages/NotFound";
+import UserDashboard from "@/pages/dashboard/UserDashboard";
+import AgentDashboard from "@/pages/dashboard/AgentDashboard";
+import AdminDashboard from "@/pages/dashboard/AdminDashboard";
 
 export const router = createBrowserRouter([
   {
@@ -51,6 +54,18 @@ export const router = createBrowserRouter([
       {
         path: "analytics",
         element: <AnalyticsPage />,
+      },
+      {
+        path: "dashboard/user",
+        element: <UserDashboard />,
+      },
+      {
+        path: "dashboard/agent",
+        element: <AgentDashboard />,
+      },
+      {
+        path: "dashboard/admin",
+        element: <AdminDashboard />,
       },
       {
         path: "auth/login",
