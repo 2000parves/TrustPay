@@ -35,7 +35,7 @@ export default function PricingPage() {
         "API access",
       ],
       cta: "Get Started Free",
-      href: "/auth/register",
+      href: "/auth/signup",
     },
     {
       name: "Agent",
@@ -56,7 +56,7 @@ export default function PricingPage() {
       ],
       notIncluded: ["API access", "White-label solutions"],
       cta: "Become an Agent",
-      href: "/auth/register",
+      href: "/auth/signup",
     },
     {
       name: "Enterprise",
@@ -387,7 +387,7 @@ export default function PricingPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="text-lg px-8" asChild>
-                <Link to="/auth/register">
+                <Link to="/auth/signup">
                   Create Free Account
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>

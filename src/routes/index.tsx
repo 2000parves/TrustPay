@@ -17,6 +17,7 @@ import NotFoundPage from "@/pages/NotFound";
 import UserProfilePage from "@/pages/dashboard/user/Profile";
 import AgentDashboard from "@/pages/dashboard/AgentDashboard";
 import AdminDashboard from "@/pages/dashboard/AdminDashboard";
+import Pricing from "@/pages/Pricing";
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
       {
         path: "features",
         element: <Features />,
+      },
+      {
+        path: "pricing",
+        element: <Pricing />,
       },
       {
         path: "about",
