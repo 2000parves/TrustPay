@@ -23,6 +23,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
 
   const [login, { isLoading }] = useLoginMutation();
   const dispatch = useDispatch();
@@ -50,8 +51,23 @@ export default function LoginPage() {
         token: result?.data.token,
       };
 
-      Cookies.set("token", userData.token);
-      Cookies.set("isAuthenticated", "true");
+      if (rememberMe) {
+        // Save credentials to localStorage if "Remember me" is checked
+        localStorage.setItem('rememberedEmail', email);
+        localStorage.setItem('rememberedPassword', password);
+      } else {
+        // Remove saved credentials if "Remember me" is not checked
+        localStorage.removeItem('rememberedEmail');
+        localStorage.removeItem('rememberedPassword');
+      }
+
+      // Set auth tokens and data
+      const authOptions = rememberMe 
+        ? { expires: 30 } // 30 days expiration if "Remember me" is checked
+        : {}; // Session cookie if not checked
+
+      Cookies.set("token", userData.token, authOptions);
+      Cookies.set("isAuthenticated", "true", authOptions);
 
       localStorage.setItem("token", result?.data.token);
       localStorage.setItem("userRole", result?.data.role);
@@ -109,6 +125,16 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
+    // Load saved credentials if "Remember me" was checked
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    const savedPassword = localStorage.getItem('rememberedPassword');
+    
+    if (savedEmail && savedPassword) {
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+      setRememberMe(true);
+    }
+
     if (
       localStorage.getItem("isAuthenticated") === "true" ||
       Cookies.get("isAuthenticated") === "true"
@@ -173,6 +199,8 @@ export default function LoginPage() {
                   type="checkbox" 
                   id="remember" 
                   className="rounded border-gray-300"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
                 />
                 <Label htmlFor="remember" className="text-sm">
                   Remember me
