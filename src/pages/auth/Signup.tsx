@@ -10,13 +10,96 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Eye, EyeOff } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useRegisterMutation } from "@/redux/api/authApi";
+import { toast } from "sonner";
+
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  contact: string;
+  location: string;
+  password: string;
+  confirmPassword: string;
+  role: string;
+}
 
 export default function SignupPage() {
+  const [formData, setFormData] = useState<FormData>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    contact: "",
+    location: "",
+    password: "",
+    confirmPassword: "",
+    role: "USER",
+  });
+
+  const accountTypes = [
+    { value: 'USER', label: 'Personal Account - User' },
+    { value: 'AGENT', label: 'Agent Account - Agent' },
+  ];
+  
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  
+  const navigate = useNavigate();
+  const [register] = useRegisterMutation();
+
+  const handleInputChange = (field: keyof FormData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (error) setError("");
+  };
+
+  const handleRoleChange = (value: string) => {
+    setFormData(prev => ({ ...prev, role: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      const result = await register({
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        contact: formData.contact,
+        location: formData.location,
+        password: formData.password,
+        role: formData.role,
+      }).unwrap();
+      
+      if (result?.data) {
+        toast.success("Registration successful! Please check your email for verification.");
+        navigate("/auth/login");
+      }
+    } catch (err: any) {
+      const errorMessage = err?.data?.message || "Registration failed. Please try again.";
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -30,13 +113,21 @@ export default function SignupPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <form className="space-y-4">
+          {error && (
+            <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm">
+              {error}
+            </div>
+          )}
+          
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="firstName">First Name</Label>
                 <Input 
                   id="firstName" 
                   placeholder="John"
+                  value={formData.firstName}
+                  onChange={(e) => handleInputChange("firstName", e.target.value)}
                   required
                 />
               </div>
@@ -45,28 +136,69 @@ export default function SignupPage() {
                 <Input 
                   id="lastName" 
                   placeholder="Doe"
+                  value={formData.lastName}
+                  onChange={(e) => handleInputChange("lastName", e.target.value)}
                   required
                 />
               </div>
             </div>
+            
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input 
                 id="email" 
                 type="email" 
                 placeholder="john@example.com"
+                value={formData.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
                 required
               />
             </div>
+            
             <div className="space-y-2">
               <Label htmlFor="phone">Phone Number</Label>
               <Input 
-                id="phone" 
+                id="contact" 
                 type="tel" 
                 placeholder="+1 (555) 123-4567"
+                value={formData.contact}
+                onChange={(e) => handleInputChange("contact", e.target.value)}
                 required
               />
             </div>
+
+            <div className="space-y-2">
+              <Label>Account Type</Label>
+              <Select 
+                value={formData.role}
+                onValueChange={handleRoleChange}
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select account type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {accountTypes.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="location">Location</Label>
+              <Input 
+                id="location"
+                type="text"
+                placeholder="Enter your location"
+                value={formData.location}
+                onChange={(e) => handleInputChange("location", e.target.value)}
+                required
+              />
+            </div>
+            
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
@@ -74,7 +206,10 @@ export default function SignupPage() {
                   id="password" 
                   type={showPassword ? "text" : "password"}
                   placeholder="Create a strong password"
+                  value={formData.password}
+                  onChange={(e) => handleInputChange("password", e.target.value)}
                   required
+                  minLength={8}
                 />
                 <Button
                   type="button"
@@ -91,6 +226,7 @@ export default function SignupPage() {
                 </Button>
               </div>
             </div>
+            
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
               <div className="relative">
@@ -98,6 +234,8 @@ export default function SignupPage() {
                   id="confirmPassword" 
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm your password"
+                  value={formData.confirmPassword}
+                  onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                   required
                 />
                 <Button
@@ -115,6 +253,7 @@ export default function SignupPage() {
                 </Button>
               </div>
             </div>
+            
             <div className="flex items-center space-x-2">
               <input 
                 type="checkbox" 
@@ -133,8 +272,20 @@ export default function SignupPage() {
                 </Link>
               </Label>
             </div>
-            <Button type="submit" className="w-full">
-              Create Account
+            
+            <Button 
+              type="submit" 
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating Account...
+                </>
+              ) : (
+                "Create Account"
+              )}
             </Button>
           </form>
 
