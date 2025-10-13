@@ -51,6 +51,11 @@ const authSlice = createSlice({
       state.token = null;
       state.isAuthenticated = false;
       state.isLoading = false;
+      // This will be handled by the logout thunk
+    },
+    clearAuthState: () => {
+      // This will be called after persistor.purge()
+      return initialState;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;

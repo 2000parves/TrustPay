@@ -17,7 +17,6 @@ import { useDispatch } from "react-redux";
 import { useLoginMutation } from "@/redux/api/authApi";
 import { setCredentials } from "@/redux/slices/authSlice";
 import { toast } from "sonner";
-import Cookies from "js-cookie";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,43 +35,22 @@ export default function LoginPage() {
 
     try {
       const result = await login({ email, password }).unwrap();
-
+      
+      // Dispatch the action to update the Redux store
       dispatch(
-        setCredentials({ user: result.data.user, token: result.data.token })
+        setCredentials({ 
+          user: result.data.user, 
+          token: result.data.token 
+        })
       );
 
-      const userData = {
-        id: result?.data?.id,
-        email: result?.data.email,
-        name: result?.data.name,
-        contact: result?.data.contact,
-        location: result?.data.location,
-        role: result?.data.role,
-        token: result?.data.token,
-      };
-
+      // Handle remember me functionality
       if (rememberMe) {
-        // Save credentials to localStorage if "Remember me" is checked
-        localStorage.setItem('rememberedEmail', email);
-        localStorage.setItem('rememberedPassword', password);
+        // Store the remember me preference in localStorage
+        localStorage.setItem('rememberMe', 'true');
       } else {
-        // Remove saved credentials if "Remember me" is not checked
-        localStorage.removeItem('rememberedEmail');
-        localStorage.removeItem('rememberedPassword');
+        localStorage.removeItem('rememberMe');
       }
-
-      // Set auth tokens and data
-      const authOptions = rememberMe 
-        ? { expires: 30 } // 30 days expiration if "Remember me" is checked
-        : {}; // Session cookie if not checked
-
-      Cookies.set("token", userData.token, authOptions);
-      Cookies.set("isAuthenticated", "true", authOptions);
-
-      localStorage.setItem("token", result?.data.token);
-      localStorage.setItem("userRole", result?.data.role);
-      localStorage.setItem("userData", JSON.stringify(userData));
-      localStorage.setItem("isAuthenticated", "true");
 
       // Normalize role to uppercase to handle API values like 'user' | 'agent' | 'admin'
       const normalizedRole = (result.data.role || "").toString().toUpperCase();
@@ -125,23 +103,10 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
-    // Load saved credentials if "Remember me" was checked
-    const savedEmail = localStorage.getItem('rememberedEmail');
-    const savedPassword = localStorage.getItem('rememberedPassword');
-    
-    if (savedEmail && savedPassword) {
-      setEmail(savedEmail);
-      setPassword(savedPassword);
-      setRememberMe(true);
-    }
-
-    if (
-      localStorage.getItem("isAuthenticated") === "true" ||
-      Cookies.get("isAuthenticated") === "true"
-    ) {
-      navigate("/");
-    }
-  }, [navigate]);
+    // Check if user was previously logged in with "Remember me"
+    const isRemembered = localStorage.getItem('rememberMe') === 'true';
+    setRememberMe(isRemembered);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
