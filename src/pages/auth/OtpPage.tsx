@@ -26,34 +26,41 @@ export default function OtpPage() {
   const location = useLocation();
   const [verifyOtp] = useVerifyOtpMutation();
 
-  const userEmail = Cookies.get("email");
+  const userEmail = Cookies.get("email") || "";
   const queryParams = new URLSearchParams(location.search);
   const redirect = queryParams.get("redirect") || "";
 
   const handleOtpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
 
     if (!otp) {
-      setError("Please enter the OTP.");
-      toast.error("Please enter the OTP.");
+      const errorMsg = "Please enter the OTP.";
+      setError(errorMsg);
+      toast.error(errorMsg);
       return;
     }
 
     if (!userEmail) {
-      setError("Email not found. Please try registering again.");
-      toast.error("Email not found. Please try registering again.");
+      const errorMsg = "Email not found. Please try registering again.";
+      setError(errorMsg);
+      toast.error(errorMsg);
       navigate("/auth/signup");
       return;
     }
 
     try {
       setIsLoading(true);
-      setError("");
 
-      // Call the verifyOtp mutation
+      // Convert OTP to number and verify it
+      const otpNumber = parseInt(otp.trim(), 10);
+      if (isNaN(otpNumber)) {
+        throw new Error("Invalid OTP format");
+      }
+
       const result = await verifyOtp({
         email: userEmail,
-        otp: otp.trim(),
+        oneTimeCode: otpNumber,
       }).unwrap();
 
       if (result?.success) {
@@ -71,9 +78,8 @@ export default function OtpPage() {
         // Clear the email from cookies
         Cookies.remove("email");
       }
-    } catch (err: any) {
-      const errorMessage = err?.data?.message || "Failed to verify OTP. Please try again.";
-      setError(errorMessage);
+    } catch (err: unknown) {
+      const errorMessage = (err as { data?: { message?: string } })?.data?.message || "Failed to verify OTP. Please try again.";
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -88,6 +94,10 @@ export default function OtpPage() {
       navigate("/");
     }
   }, [navigate]);
+
+  if (error) {
+    toast.error(error);
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">

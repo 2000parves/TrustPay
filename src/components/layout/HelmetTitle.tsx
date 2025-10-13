@@ -6,12 +6,12 @@ type HelmetTitleProps = {
 };
 
 const HelmetTitle = ({
-  title = "TrustPay",
-  description = "TrustPay is a digital wallet for payments",
+  title = "PayWallet",
+  description = "PayWallet is a digital wallet for payments",
 }: HelmetTitleProps) => {
   return (
     <Helmet>
-      <title>{title ? `${title} - TrustPay` : "TrustPay"}</title>
+      <title>{title ? `${title} - PayWallet` : "PayWallet"}</title>
       <meta name="description" content={description} />
     </Helmet>
   );

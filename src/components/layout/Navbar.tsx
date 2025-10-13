@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useGetProfileQuery } from "@/redux/api/userApi";
 import { logout } from "@/redux/slices/authSlice";
 import { DialogTitle } from "@radix-ui/react-dialog"; // <- Required for accessibility
 import Cookie from "js-cookie";
@@ -28,12 +29,11 @@ import { toast } from "sonner";
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const isUser = localStorage.getItem("userRole");
-  
+  const { data } = useGetProfileQuery();
+  const user = data?.data;
+
   const isAuthenticated =
     Cookie.get("isAuthenticated") || localStorage.getItem("isAuthenticated");
-  // Derive user from local storage or cookies (no API)
-  const rawUser = Cookie.get("userData") || localStorage.getItem("userData");
-  const user = rawUser ? (() => { try { return JSON.parse(rawUser); } catch { return null; } })() : null;
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
@@ -62,24 +62,22 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-gray-800 bg-black/90 backdrop-blur-xl">
-      <div className="container mx-auto flex h-20 items-center justify-between">
-        <Link to="/" className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center">
-            <Wallet className="h-6 w-6 text-white" />
-          </div>
-          <span className="font-black text-2xl bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">TrustPay</span>
+    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto flex h-16 items-center justify-between">
+        <Link to="/" className="flex items-center space-x-2">
+          <Wallet className="h-6 w-6 text-primary" />
+          <span className="font-bold text-xl">PayWallet</span>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden md:flex items-center space-x-6">
           {navLinks.map((link) => (
             <NavLink
               key={link.href}
               to={link.href}
               className={({ isActive }) =>
-                `text-sm font-semibold transition-all duration-200 hover:text-blue-400 ${
-                  isActive ? "text-blue-400 border-b-2 border-blue-400 pb-1" : "text-gray-300"
+                `text-sm font-medium transition-colors hover:text-primary ${
+                  isActive ? "underline underline-offset-4" : ""
                 }`
               }
             >
@@ -109,8 +107,8 @@ export function Navbar() {
                       <AvatarFallback>
                         {user?.name ||
                           user?.name
-                            ?.split(" ")
-                            .map((n: string) => n[0])
+                            .split(" ")
+                            .map((n) => n[0])
                             .join("")}
                       </AvatarFallback>
                     </Avatar>
@@ -179,12 +177,12 @@ export function Navbar() {
           )}
 
           {!isAuthenticated ? (
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" className="text-gray-300 hover:text-blue-400 hover:bg-gray-800" asChild>
+            <div className="flex items-center space-x-2">
+              <Button variant="ghost" asChild>
                 <Link to="/auth/login">Sign In</Link>
               </Button>
-              <Button className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white border-0 shadow-lg shadow-blue-500/25" asChild>
-                <Link to="/auth/signup">Launch App</Link>
+              <Button asChild>
+                <Link to="/auth/signup">Get Started</Link>
               </Button>
             </div>
           ) : (

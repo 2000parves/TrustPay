@@ -10,7 +10,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <Wallet className="h-6 w-6 text-primary" />
-              <span className="font-bold text-xl">TrustPay</span>
+              <span className="font-bold text-xl">PayWallet</span>
             </div>
             <p className="text-muted-foreground">
               The future of digital payments, available today.
@@ -79,12 +79,12 @@ const Footer = () => {
         </div>
         <div className="flex justify-center items-center lg:-my-16 z-0">
           <strong className="uppercase lg:text-[15em]  md:text-[8em] text-[40px] font-black">
-            <LineShadowText>TrustPay</LineShadowText>
+            <LineShadowText>PayWallet</LineShadowText>
           </strong>
         </div>
         <div className="border-t mt-8 pt-8 text-center text-muted-foreground">
           <p>
-            &copy; {new Date().getFullYear()} TrustPay. All rights reserved by{" "}
+            &copy; {new Date().getFullYear()} PayWallet. All rights reserved by{" "}
             {""}{" "}
             <a
               href="https://www.mdranju.xyz"
