@@ -18,7 +18,7 @@ import AgentTransactionsPage from "@/pages/dashboard/agent/Transactions";
 import ProfilePage from "@/pages/dashboard/user/Profile";
 import TransactionsPage from "@/pages/dashboard/user/Transactions";
 import WalletPage from "@/pages/dashboard/user/Wallet";
-import FAQPage from "@/pages/Faq";
+import FAQPage from "@/pages/FAQ";
 import FeaturesPage from "@/pages/Features";
 import Home from "@/pages/Home";
 import PricingPage from "@/pages/Pricing";
