@@ -60,17 +60,17 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">Legal</h3>
             <ul className="space-y-2 text-muted-foreground">
               <li>
-                <Link to="#" className="hover:text-primary">
+                <Link to="/privacy" className="hover:text-primary">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="#" className="hover:text-primary">
+                <Link to="/terms" className="hover:text-primary">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link to="#" className="hover:text-primary">
+                <Link to="/security" className="hover:text-primary">
                   Security
                 </Link>
               </li>
@@ -79,7 +79,7 @@ const Footer = () => {
         </div>
         <div className="flex justify-center items-center lg:-my-16 z-0">
           <strong className="uppercase lg:text-[15em]  md:text-[8em] text-[40px] font-black">
-            <LineShadowText>TrustPay</LineShadowText>
+            <LineShadowText>Pay Sure</LineShadowText>
           </strong>
         </div>
         <div className="border-t mt-8 pt-8 text-center text-muted-foreground">
@@ -87,11 +87,11 @@ const Footer = () => {
             &copy; {new Date().getFullYear()} TrustPay. All rights reserved by{" "}
             {""}{" "}
             <a
-              href="https://www.mdranju.xyz"
+              href="https://parvesmosarof.netlify.app"
               className="font-bold hover:text-primary"
               target="_blank"
             >
-              Md. Ranju
+              Parves Mosarof
             </a>
             .
           </p>
