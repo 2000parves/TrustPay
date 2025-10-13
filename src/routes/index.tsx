@@ -1,102 +1,246 @@
 import App from "@/App";
-import { createBrowserRouter } from "react-router";
-import Home from "@/pages/Home";
-import Features from "@/pages/Features";
+import AdminLayout from "@/components/layout/AdminLayout";
 import About from "@/pages/About";
-import Contact from "@/pages/Contact";
-import Login from "@/pages/auth/Login";
-import Signup from "@/pages/auth/Signup";
-import FAQ from "@/pages/FAQ";
 import ForgotPasswordPage from "@/pages/auth/ForgotPassword";
+import LoginPage from "@/pages/auth/Login";
 import OtpPage from "@/pages/auth/OtpPage";
-import TermsPage from "@/pages/Terms";
-import PrivacyPage from "@/pages/Privacy";
-import SupportPage from "@/pages/auth/Support";
-import AnalyticsPage from "@/pages/Analytics";
-import NotFoundPage from "@/pages/NotFound";
-import UserProfilePage from "@/pages/dashboard/user/Profile";
-import AgentDashboard from "@/pages/dashboard/AgentDashboard";
-import AdminDashboard from "@/pages/dashboard/AdminDashboard";
-import Pricing from "@/pages/Pricing";
+import SignupPage from "@/pages/auth/Signup";
+import Contact from "@/pages/Contact";
+import AdminDashboardPage from "@/pages/dashboard/admin/AdminDashboardPage";
+import AdminAgentsPage from "@/pages/dashboard/admin/AgentsPage";
+import AdminSettingsPage from "@/pages/dashboard/admin/SettingsPage";
+import AdminTransactionsPage from "@/pages/dashboard/admin/TransactionsPage";
+import AdminUsersPage from "@/pages/dashboard/admin/UserPage";
+import CashOperationsPage from "@/pages/dashboard/agent/CashOperationsPage";
+import CommissionPage from "@/pages/dashboard/agent/Commission";
+import AgentProfilePage from "@/pages/dashboard/agent/Profile";
+import AgentTransactionsPage from "@/pages/dashboard/agent/Transactions";
+import ProfilePage from "@/pages/dashboard/user/Profile";
+import TransactionsPage from "@/pages/dashboard/user/Transactions";
+import WalletPage from "@/pages/dashboard/user/Wallet";
+import FAQPage from "@/pages/Faq";
+import FeaturesPage from "@/pages/Features";
+import Home from "@/pages/Home";
+import PricingPage from "@/pages/Pricing";
+import { createBrowserRouter } from "react-router";
+import AdminRoute from "./AdminRoute";
+import AgentRoute from "./AgentRoute";
+import PrivateRoute from "./PrivateRoute";
+import UserRoute from "./UserRoute";
+import NotFoundPage from "@/pages/NotFoundPage";
+import Privacy from "@/pages/Privacy";
+import Terms from "@/pages/Terms";
 
 export const router = createBrowserRouter([
   {
     Component: App,
+
     path: "/",
     children: [
       {
         index: true,
-        element: <Home />,
+        Component: Home,
+        path: "/",
       },
       {
-        path: "features",
-        element: <Features />,
-      },
-      {
-        path: "pricing",
-        element: <Pricing />,
-      },
-      {
+        Component: About,
         path: "about",
-        element: <About />,
       },
       {
-        path: "contact",
-        element: <Contact />,
-      },
-      {
-        path: "faq",
-        element: <FAQ />,
-      },
-      {
-        path: "terms",
-        element: <TermsPage />,
-      },
-      {
+        Component: Privacy,
         path: "privacy",
-        element: <PrivacyPage />,
       },
       {
-        path: "analytics",
-        element: <AnalyticsPage />,
+        Component: Terms,
+        path: "terms",
       },
       {
-        path: "dashboard/user",
-        element: <UserProfilePage />,
+        Component: FAQPage,
+        path: "faq",
       },
+      {
+        Component: FeaturesPage,
+        path: "features",
+      },
+      {
+        Component: Contact,
+        path: "contact",
+      },
+      {
+        Component: PricingPage,
+        path: "pricing",
+      },
+    ],
+  },
+  {
+    Component: AdminLayout,
+    path: "dashboard",
+    children: [
+      {
+        Component: () => (
+          <PrivateRoute>
+            <UserRoute>
+              <WalletPage />
+            </UserRoute>
+          </PrivateRoute>
+        ),
 
-      {
-        path: "dashboard/agent",
-        element: <AgentDashboard />,
+        path: "user",
       },
       {
-        path: "dashboard/admin",
-        element: <AdminDashboard />,
+        Component: () => (
+          <PrivateRoute>
+            <UserRoute>
+              <ProfilePage />
+            </UserRoute>
+          </PrivateRoute>
+        ),
+        path: "user/profile",
       },
       {
-        path: "auth/login",
-        element: <Login />,
+        Component: () => (
+          <PrivateRoute>
+            <UserRoute>
+              <TransactionsPage />
+            </UserRoute>
+          </PrivateRoute>
+        ),
+        path: "user/transactions",
       },
       {
-        path: "auth/signup",
-        element: <Signup />,
+        Component: () => (
+          <PrivateRoute>
+            <UserRoute>
+              <WalletPage />
+            </UserRoute>
+          </PrivateRoute>
+        ),
+
+        path: "user/wallet",
       },
       {
-        path: "auth/forgot-password",
-        element: <ForgotPasswordPage />,
+        Component: () => (
+          <PrivateRoute>
+            <AgentRoute>
+              <CashOperationsPage />
+            </AgentRoute>
+          </PrivateRoute>
+        ),
+        path: "agent/",
       },
       {
-        path: "auth/otp-verification",
-        element: <OtpPage />,
+        Component: () => (
+          <PrivateRoute>
+            <AgentRoute>
+              <CashOperationsPage />
+            </AgentRoute>
+          </PrivateRoute>
+        ),
+
+        path: "agent/cash-operations",
       },
       {
-        path: "auth/support",
-        element: <SupportPage />,
+        Component: () => (
+          <PrivateRoute>
+            <AgentRoute>
+              <AgentProfilePage />
+            </AgentRoute>
+          </PrivateRoute>
+        ),
+        path: "agent/profile",
       },
       {
-        path: "*",
-        element: <NotFoundPage />,
+        Component: () => (
+          <PrivateRoute>
+            <AgentRoute>
+              <CommissionPage />
+            </AgentRoute>
+          </PrivateRoute>
+        ),
+        path: "agent/commission",
       },
-    ]
+      {
+        Component: () => (
+          <PrivateRoute>
+            <AgentRoute>
+              <AgentTransactionsPage />
+            </AgentRoute>
+          </PrivateRoute>
+        ),
+        path: "agent/transactions",
+      },
+      {
+        Component: () => (
+          <PrivateRoute>
+            <AdminRoute>
+              <AdminDashboardPage />
+            </AdminRoute>
+          </PrivateRoute>
+        ),
+        path: "admin",
+      },
+      {
+        Component: () => (
+          <PrivateRoute>
+            <AdminRoute>
+              <AdminAgentsPage />
+            </AdminRoute>
+          </PrivateRoute>
+        ),
+        path: "admin/agents",
+      },
+      {
+        Component: () => (
+          <PrivateRoute>
+            <AdminRoute>
+              <AdminUsersPage />
+            </AdminRoute>
+          </PrivateRoute>
+        ),
+
+        path: "admin/users",
+      },
+      {
+        Component: () => (
+          <PrivateRoute>
+            <AdminRoute>
+              <AdminSettingsPage />
+            </AdminRoute>
+          </PrivateRoute>
+        ),
+
+        path: "admin/settings",
+      },
+      {
+        Component: () => (
+          <PrivateRoute>
+            <AdminRoute>
+              <AdminTransactionsPage />
+            </AdminRoute>
+          </PrivateRoute>
+        ),
+        path: "admin/transactions",
+      },
+    ],
+  },
+  {
+    Component: SignupPage,
+    path: "auth/signup",
+  },
+  {
+    Component: LoginPage,
+    path: "auth/login",
+  },
+  {
+    Component: ForgotPasswordPage,
+    path: "auth/forgot-password",
+  },
+  {
+    Component: OtpPage,
+    path: "auth/otp-verification",
+  },
+  {
+    Component: NotFoundPage,
+    path: "*",
   },
 ]);

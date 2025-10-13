@@ -84,9 +84,9 @@ export default function PricingPage() {
 
   const transactionFees = [
     {
-      type: "PayWallet to PayWallet",
+      type: "TrustPay to TrustPay",
       fee: "Free",
-      description: "Send money between PayWallet users instantly at no cost",
+      description: "Send money between TrustPay users instantly at no cost",
     },
     {
       type: "Cash-In (via Agent)",
@@ -101,12 +101,12 @@ export default function PricingPage() {
     {
       type: "Bank Transfer (Incoming)",
       fee: "Free",
-      description: "Add money from your bank account to PayWallet",
+      description: "Add money from your bank account to TrustPay",
     },
     {
       type: "Bank Transfer (Outgoing)",
       fee: "$0.50 - $2.00",
-      description: "Transfer money from PayWallet to your bank account",
+      description: "Transfer money from TrustPay to your bank account",
     },
     {
       type: "Bill Payments",
@@ -332,7 +332,7 @@ export default function PricingPage() {
                 Are there any monthly fees?
               </h3>
               <p className="text-muted-foreground">
-                No, PayWallet doesn't charge monthly fees for personal accounts.
+                No, TrustPay doesn't charge monthly fees for personal accounts.
                 You only pay transaction fees when you use specific services
                 like cash-out or bank transfers.
               </p>
@@ -382,7 +382,7 @@ export default function PricingPage() {
               Ready to Get Started?
             </h2>
             <p className="text-xl text-muted-foreground mb-8">
-              Join millions of users who trust PayWallet for their digital
+              Join millions of users who trust TrustPay for their digital
               transactions. Start with a free account today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -38,7 +38,7 @@ export function RegisterForm() {
           Create Account
         </CardTitle>
         <CardDescription className="text-center">
-          Join PayWallet for secure digital transactions
+          Join TrustPay for secure digital transactions
         </CardDescription>
       </CardHeader>
       <CardContent>

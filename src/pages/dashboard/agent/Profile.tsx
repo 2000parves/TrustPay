@@ -7,37 +7,48 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { User, Phone, Mail, Lock, Bell, Shield, Camera } from "lucide-react";
+import {
+  User,
+  Phone,
+  Mail,
+  Lock,
+  Bell,
+  Shield,
+  Camera,
+  MapPin,
+  Calendar,
+} from "lucide-react";
 import { useState } from "react";
 import { useGetProfileQuery } from "@/redux/api/userApi";
 import { format } from "date-fns";
-import { useChangePasswordMutation } from "@/redux/api/authApi";
-import { toast } from "sonner";
-import ProfileOverviewSkeletons from "./skeletons/ProfileOverviewSkeletons";
+import ProfileOverviewSkeletons from "../user/skeletons/ProfileOverviewSkeletons";
 import ProfileSettingsSkeletons, {
   SettingsSkeletons,
-} from "./skeletons/ProfileSettingsSkeletons";
+} from "../user/skeletons/ProfileSettingsSkeletons";
+import { useChangePasswordMutation } from "@/redux/api/authApi";
+import { toast } from "sonner";
 
-export default function ProfilePage() {
+export default function AgentProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
-
-  const { data, isLoading: userDataIsLoading } = useGetProfileQuery();
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
 
+  const { data, isLoading } = useGetProfileQuery();
+  const [changePassword, { isLoading: isChangePasswordLoading }] =
+    useChangePasswordMutation();
+
   // Get user data from the API
   const user = data?.data;
 
-  const [changePassword, { isLoading }] = useChangePasswordMutation();
-
   const [notifications, setNotifications] = useState({
     emailNotifications: true,
-    smsNotifications: false,
+    smsNotifications: true,
     pushNotifications: true,
     transactionAlerts: true,
+    commissionUpdates: true,
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -69,26 +80,25 @@ export default function ProfilePage() {
   };
 
   return (
-    <DashboardLayout userRole="user">
+    <DashboardLayout userRole="agent">
       <div className="space-y-6">
         {/* Page Header */}
         <div>
-          <h1 className="text-3xl font-bold text-foreground">
-            Profile Settings
-          </h1>
+          <h1 className="text-3xl font-bold text-foreground">Agent Profile</h1>
           <p className="text-muted-foreground">
-            Manage your account information and preferences
+            Manage your agent account information and preferences
           </p>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Profile Overview */}
-          {userDataIsLoading ? (
+
+          {isLoading ? (
             <ProfileOverviewSkeletons />
           ) : (
             <Card className="lg:col-span-1">
               <CardHeader>
-                <CardTitle>Profile Overview</CardTitle>
+                <CardTitle>Agent Overview</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex flex-col items-center text-center">
@@ -112,8 +122,11 @@ export default function ProfilePage() {
                     <p className="text-sm text-muted-foreground">
                       {user?.email}
                     </p>
-                    <Badge variant="secondary" className="mt-2">
-                      {user?.verified ? "Verified User" : "Unverified User"}
+                    <Badge
+                      variant="secondary"
+                      className="mt-2 bg-green-100 text-green-700"
+                    >
+                      {user?.verified ? "Active & Verified" : "Unverified"}
                     </Badge>
                   </div>
                 </div>
@@ -124,19 +137,34 @@ export default function ProfilePage() {
                   <div className="flex items-center gap-3">
                     <User className="h-4 w-4 text-muted-foreground" />
                     <div>
-                      <p className="text-sm font-medium">Member since</p>
+                      <p className="text-sm font-medium">Agent ID</p>
                       <p className="text-sm text-muted-foreground">
-                        {format(
-                          new Date(user?.createdAt || 0),
-                          "MMMM dd, yyyy"
-                        )}
+                        {user?._id}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium">Location</p>
+                      <p className="text-sm text-muted-foreground">
+                        {user?.location || "Bangladesh"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium">Agent since</p>
+                      <p className="text-sm text-muted-foreground">
+                        {format(user?.createdAt || 0, "MMMM dd, yyyy")}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <Shield className="h-4 w-4 text-muted-foreground" />
                     <div>
-                      <p className="text-sm font-medium">Account Status</p>
+                      <p className="text-sm font-medium">Status</p>
                       <p className="text-sm text-green-600">
                         {user?.verified ? "Active & Verified" : "Unverified"}
                       </p>
@@ -150,7 +178,7 @@ export default function ProfilePage() {
           {/* Profile Settings */}
           <div className="lg:col-span-2 space-y-6">
             {/* Personal Information */}
-            {userDataIsLoading ? (
+            {isLoading ? (
               <ProfileSettingsSkeletons />
             ) : (
               <Card>
@@ -171,7 +199,7 @@ export default function ProfilePage() {
                       <Label htmlFor="firstName">First Name</Label>
                       <Input
                         id="firstName"
-                        value={data?.data?.name.split(" ")[0]}
+                        value={user?.name.split(" ")[0]}
                         onChange={(e) =>
                           handleInputChange("firstName", e.target.value)
                         }
@@ -182,7 +210,7 @@ export default function ProfilePage() {
                       <Label htmlFor="lastName">Last Name</Label>
                       <Input
                         id="lastName"
-                        value={data?.data?.name.split(" ")[1]}
+                        value={user?.name.split(" ")[1]}
                         onChange={(e) =>
                           handleInputChange("lastName", e.target.value)
                         }
@@ -225,6 +253,22 @@ export default function ProfilePage() {
                     </div>
                   </div>
 
+                  <div>
+                    <Label htmlFor="location">Branch Location</Label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="location"
+                        className="pl-10"
+                        value={user?.location || "Bangladesh"}
+                        onChange={(e) =>
+                          handleInputChange("location", e.target.value)
+                        }
+                        disabled={!isEditing}
+                      />
+                    </div>
+                  </div>
+
                   {isEditing && (
                     <div className="flex gap-2 pt-4">
                       <Button>Save Changes</Button>
@@ -241,7 +285,8 @@ export default function ProfilePage() {
             )}
 
             {/* Security Settings */}
-            {userDataIsLoading ? (
+
+            {isLoading ? (
               <SettingsSkeletons />
             ) : (
               <Card>
@@ -258,7 +303,6 @@ export default function ProfilePage() {
                       id="currentPassword"
                       type="password"
                       placeholder="Enter current password"
-                      required
                       value={formData.currentPassword}
                       onChange={(e) =>
                         handleInputChange("currentPassword", e.target.value)
@@ -274,7 +318,6 @@ export default function ProfilePage() {
                         type="password"
                         placeholder="Enter new password"
                         value={formData.newPassword}
-                        required
                         onChange={(e) =>
                           handleInputChange("newPassword", e.target.value)
                         }
@@ -286,7 +329,6 @@ export default function ProfilePage() {
                         id="confirmPassword"
                         type="password"
                         placeholder="Confirm new password"
-                        required
                         value={formData.confirmPassword}
                         onChange={(e) =>
                           handleInputChange("confirmPassword", e.target.value)
@@ -296,7 +338,9 @@ export default function ProfilePage() {
                   </div>
 
                   <Button onClick={handelChangePassword}>
-                    {isLoading ? "Changing..." : "Update Password"}
+                    {isChangePasswordLoading
+                      ? "Changing..."
+                      : "Update Password"}
                   </Button>
                 </CardContent>
               </Card>
@@ -367,6 +411,21 @@ export default function ProfilePage() {
                     checked={notifications.transactionAlerts}
                     onCheckedChange={(value) =>
                       handleNotificationChange("transactionAlerts", value)
+                    }
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Commission Updates</p>
+                    <p className="text-sm text-muted-foreground">
+                      Get notified when commissions are paid
+                    </p>
+                  </div>
+                  <Switch
+                    checked={notifications.commissionUpdates}
+                    onCheckedChange={(value) =>
+                      handleNotificationChange("commissionUpdates", value)
                     }
                   />
                 </div>

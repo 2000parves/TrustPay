@@ -21,66 +21,50 @@ import { toast } from "sonner";
 export default function OtpPage() {
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
-  const [verifyOtp] = useVerifyOtpMutation();
 
-  const userEmail = Cookies.get("email") || "";
+  const userEmail = Cookies.get("email");
+
+  console.log(userEmail);
+
   const queryParams = new URLSearchParams(location.search);
-  const redirect = queryParams.get("redirect") || "";
+
+  // Get the value of the "redirect" parameter
+  const redirect = queryParams.get("redirect");
+  console.log(redirect);
+  const [verifyOtp] = useVerifyOtpMutation();
 
   const handleOtpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
 
     if (!otp) {
-      const errorMsg = "Please enter the OTP.";
-      setError(errorMsg);
-      toast.error(errorMsg);
-      return;
-    }
-
-    if (!userEmail) {
-      const errorMsg = "Email not found. Please try registering again.";
-      setError(errorMsg);
-      toast.error(errorMsg);
-      navigate("/auth/signup");
+      toast.error("Please enter the OTP.");
       return;
     }
 
     try {
       setIsLoading(true);
-
-      // Convert OTP to number and verify it
-      const otpNumber = parseInt(otp.trim(), 10);
-      if (isNaN(otpNumber)) {
-        throw new Error("Invalid OTP format");
-      }
-
       const result = await verifyOtp({
-        email: userEmail,
-        oneTimeCode: otpNumber,
+        email: userEmail as string,
+        oneTimeCode: parseInt(otp) as number,
       }).unwrap();
 
-      if (result?.success) {
-        toast.success("Email verified successfully!");
-
-        // Redirect based on the redirect parameter
+      if (result.success) {
+        toast.success("OTP verified successfully!");
+        // Navigate to the next step after successful OTP verification
         if (redirect === "login") {
-          navigate("/auth/login");
+          navigate("/auth/login"); // Adjust accordingly
         } else if (redirect === "reset-password") {
-          navigate("/auth/change-password");
-        } else {
-          navigate("/auth/login");
+          navigate("/auth/change-password"); // Adjust accordingly
         }
-
-        // Clear the email from cookies
         Cookies.remove("email");
+      } else {
+        toast.error("Invalid OTP, please try again.");
       }
-    } catch (err: unknown) {
-      const errorMessage = (err as { data?: { message?: string } })?.data?.message || "Failed to verify OTP. Please try again.";
-      toast.error(errorMessage);
+    } catch (error) {
+      toast.error("An error occurred during OTP verification.");
+      console.error("OTP verification failed:", error);
     } finally {
       setIsLoading(false);
     }
@@ -95,10 +79,6 @@ export default function OtpPage() {
     }
   }, [navigate]);
 
-  if (error) {
-    toast.error(error);
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
       <HelmetTitle title="OTP Verification" />
@@ -108,7 +88,7 @@ export default function OtpPage() {
           <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mb-4">
             <Key className="h-8 w-8 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">PayWallet</h1>
+          <h1 className="text-2xl font-bold text-foreground">TrustPay</h1>
           <p className="text-muted-foreground">Financial Dashboard System</p>
         </div>
 

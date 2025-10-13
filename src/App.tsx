@@ -1,13 +1,16 @@
-
-
 import { Outlet } from "react-router";
-import { Navbar } from "@/components/layout/Navbar";
+import CommonLayout from "./components/layout/CommonLayout";
+import ScrollToTop from "./components/layout/ScrollToTop";
+import AnnouncementModal from "./components/layout/AnnouncementModal";
 
 const App = () => {
   return (
     <>
-      <Navbar />
-      <Outlet />
+      <CommonLayout>
+        <ScrollToTop />
+        <AnnouncementModal />
+        <Outlet />
+      </CommonLayout>
     </>
   );
 };

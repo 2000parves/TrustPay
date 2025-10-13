@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useForgotPasswordMutation } from "@/redux/api/authApi";
 import Cookies from "js-cookie";
 import { ArrowLeft, Mail, Wallet } from "lucide-react";
 import type React from "react";
@@ -21,23 +22,25 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [resetPassword] = useForgotPasswordMutation();
   const router = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate password reset request without API
-    try {
-      await new Promise((res) => setTimeout(res, 800));
-      setIsSubmitted(true);
-      toast.info("Password reset link sent successfully!");
-      // Store email locally so OTP page can read it
+    const result = await resetPassword({
+      email: email,
+    }).unwrap();
+    console.log(result);
+
+    toast.info("Password reset link sent successfully!");
+    // }
+
+    // Simulate password reset process
+    setTimeout(() => {
       Cookies.set("email", email);
-      // Navigate to OTP verification
       router(`/auth/otp-verification/?redirect=reset-password`);
-    } finally {
-      setIsLoading(false);
-    }
+    }, 1500);
   };
 
   useEffect(() => {
@@ -58,7 +61,7 @@ export default function ForgotPasswordPage() {
           <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mb-4">
             <Wallet className="h-8 w-8 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">PayWallet</h1>
+          <h1 className="text-2xl font-bold text-foreground">TrustPay</h1>
           <p className="text-muted-foreground">Reset your password</p>
         </div>
 

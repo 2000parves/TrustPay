@@ -155,7 +155,7 @@ export function DashboardLayout({
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-semibold text-sidebar-foreground">
-                PayWallet
+                TrustPay
               </span>
               <Badge variant="secondary" className="text-xs w-fit">
                 {roleLabels[userRole]}

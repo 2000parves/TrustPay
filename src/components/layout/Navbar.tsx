@@ -66,7 +66,7 @@ export function Navbar() {
       <div className="container mx-auto flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
           <Wallet className="h-6 w-6 text-primary" />
-          <span className="font-bold text-xl">PayWallet</span>
+          <span className="font-bold text-xl">TrustPay</span>
         </Link>
 
         {/* Desktop Navigation */}
