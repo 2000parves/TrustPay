@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useVerifyOtpMutation } from "@/redux/api/authApi";
 import Cookies from "js-cookie";
 import { Key } from "lucide-react";
 import type React from "react";
@@ -20,46 +21,60 @@ import { toast } from "sonner";
 export default function OtpPage() {
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
+  const [verifyOtp] = useVerifyOtpMutation();
 
   const userEmail = Cookies.get("email");
-
-  console.log(userEmail);
-
   const queryParams = new URLSearchParams(location.search);
-
-  // Get the value of the "redirect" parameter
-  const redirect = queryParams.get("redirect");
-  console.log(redirect);
+  const redirect = queryParams.get("redirect") || "";
 
   const handleOtpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!otp) {
+      setError("Please enter the OTP.");
       toast.error("Please enter the OTP.");
+      return;
+    }
+
+    if (!userEmail) {
+      setError("Email not found. Please try registering again.");
+      toast.error("Email not found. Please try registering again.");
+      navigate("/auth/signup");
       return;
     }
 
     try {
       setIsLoading(true);
-      // Simulate OTP verification without backend
-      await new Promise((res) => setTimeout(res, 800));
-      const isValid = otp === "123456" || otp.trim().length === 6;
-      if (!isValid) {
-        toast.error("Invalid OTP, please try again.");
-        return;
-      }
+      setError("");
 
-      toast.success("OTP verified successfully!");
-      if (redirect === "login") {
-        navigate("/auth/login");
-      } else if (redirect === "reset-password") {
-        navigate("/auth/change-password");
-      } else {
-        navigate("/");
+      // Call the verifyOtp mutation
+      const result = await verifyOtp({
+        email: userEmail,
+        otp: otp.trim(),
+      }).unwrap();
+
+      if (result?.success) {
+        toast.success("Email verified successfully!");
+
+        // Redirect based on the redirect parameter
+        if (redirect === "login") {
+          navigate("/auth/login");
+        } else if (redirect === "reset-password") {
+          navigate("/auth/change-password");
+        } else {
+          navigate("/auth/login");
+        }
+
+        // Clear the email from cookies
+        Cookies.remove("email");
       }
-      Cookies.remove("email");
+    } catch (err: any) {
+      const errorMessage = err?.data?.message || "Failed to verify OTP. Please try again.";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

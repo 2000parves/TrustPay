@@ -89,11 +89,13 @@ export default function SignupPage() {
       }).unwrap();
       
       if (result?.data) {
-        toast.success("Registration successful! Please check your email for verification.");
-        navigate("/auth/login");
+        toast.success("Registration successful! Please verify your email with the OTP sent to your email.");
+        // Store email in cookies for OTP verification
+        document.cookie = `email=${formData.email}; path=/`;
+        navigate("/auth/otp?redirect=login");
       }
-    } catch (err: any) {
-      const errorMessage = err?.data?.message || "Registration failed. Please try again.";
+    } catch (err: unknown) {
+      const errorMessage = (err as { data?: { message?: string } })?.data?.message || "Registration failed. Please try again.";
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
