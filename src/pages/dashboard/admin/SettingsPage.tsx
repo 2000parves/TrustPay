@@ -6,8 +6,10 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
-import { Settings, DollarSign, Shield, Bell, Activity } from "lucide-react"
+import { Settings, DollarSign, Shield, Bell, Activity, Compass } from "lucide-react"
 import { useState } from "react"
+import { useTour } from "@/hooks/useTour"
+import { toast } from "sonner"
 
 export default function AdminSettingsPage() {
   const [systemSettings, setSystemSettings] = useState({
@@ -44,9 +46,16 @@ export default function AdminSettingsPage() {
     setSystemSettings((prev) => ({ ...prev, [key]: value }))
   }
 
+  const { restartTour } = useTour()
+
   const handleSaveSettings = () => {
     console.log("[v0] Saving system settings:", systemSettings)
     // Handle saving settings here
+  }
+
+  const handleRestartTour = () => {
+    restartTour()
+    toast.success("Tour will restart when you navigate to the dashboard")
   }
 
   return (
@@ -351,6 +360,31 @@ export default function AdminSettingsPage() {
                 </div>
                 <Badge className="bg-green-50 text-green-700">Running</Badge>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Guided Tour */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Compass className="h-4 w-4" />
+              Guided Tour
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Restart the guided tour to learn about the dashboard features and navigation.
+              </p>
+              <Button 
+                variant="outline" 
+                onClick={handleRestartTour}
+                className="gap-2"
+              >
+                <Compass className="h-4 w-4" />
+                Restart Guided Tour
+              </Button>
             </div>
           </CardContent>
         </Card>
