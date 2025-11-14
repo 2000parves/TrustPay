@@ -6,6 +6,13 @@ A modern, responsive frontend application for managing digital wallet operations
 
 [https://trustpay-app.vercel.app](https://trust-payout.netlify.app/)
 
+
+
+## Demo video
+
+[video](https://jam.dev/c/093ac391-81a2-4736-99c4-d07b41459c0e)
+
+
 ---
 
 ## Table of Contents
