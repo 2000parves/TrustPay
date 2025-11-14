@@ -21,8 +21,7 @@ import { setCredentials } from "@/redux/slices/authSlice";
 import { Eye, EyeOff, Lock, Mail, Wallet } from "lucide-react";
 import { toast } from "sonner";
 import HelmetTitle from "@/components/layout/HelmetTitle";
-import { AppTour } from "@/components/onboarding/AppTour";
-import { useTour } from "@/hooks/useTour";
+
 import Cookies from "js-cookie";
 
 export default function LoginPage() {
@@ -33,7 +32,6 @@ export default function LoginPage() {
   const [login, { isLoading }] = useLoginMutation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { run, completeTour } = useTour();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,18 +42,9 @@ export default function LoginPage() {
     try {
       const result = await login({ email, password }).unwrap();
 
-      // Check if this is a new user (first login)
-      const isNewUser = result.data.isNewUser || false;
-      
       // Dispatch credentials to Redux store
       dispatch(
-        setCredentials({ 
-          user: { 
-            ...result.data.user, 
-            isNewUser 
-          }, 
-          token: result.data.token 
-        })
+        setCredentials({ user: result.data.user, token: result.data.token })
       );
 
       const userData = {
@@ -66,7 +55,6 @@ export default function LoginPage() {
         location: result?.data.location,
         role: result?.data.role,
         token: result?.data.token,
-        isNewUser,
       };
       // Store in localStorage for persistence
       Cookies.set("token", userData.token);
@@ -127,7 +115,6 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
       <HelmetTitle title="Login" />
-      <AppTour run={run} onComplete={completeTour} />
       <div className="w-full max-w-md space-y-6">
         {/* Logo/Brand */}
         <div className="text-center">

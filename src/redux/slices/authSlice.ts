@@ -16,7 +16,6 @@ export interface User {
     image: string;
     verified: boolean;
     length: number;
-    isNewUser?: boolean;
   };
 }
 
